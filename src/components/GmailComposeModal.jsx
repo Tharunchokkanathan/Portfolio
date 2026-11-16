@@ -17,8 +17,6 @@ import {
   Copy,
   Loader2,
   CheckCircle2,
-  ExternalLink,
-  Mail,
   Send,
   AlertCircle
 } from 'lucide-react';
@@ -71,7 +69,6 @@ export default function GmailComposeModal({
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showSendMenu, setShowSendMenu] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [copied, setCopied] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -120,20 +117,20 @@ export default function GmailComposeModal({
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   };
 
-  // TRUE DIRECT ASYNC SEND — ZERO REDIRECTS, NO GOOGLE TABS!
+  // TRUE DIRECT ASYNC SEND — ZERO REDIRECTS, VIBRANT DARK DELIVERY!
   const handleDirectSend = async (e) => {
     e?.preventDefault();
     if (status === 'sending' || status === 'success') return;
 
     // 1. Strict "From" validation
     if (!senderEmail.trim()) {
-      setFromError('Please enter your email so Tharun can reply to you');
+      setFromError('Please enter your email so Tharun can reply');
       senderEmailInputRef.current?.focus();
       return;
     }
 
     if (!isValidEmail(senderEmail)) {
-      setFromError('Please enter a valid email address (e.g. name@gmail.com)');
+      setFromError('Please enter a valid email address');
       senderEmailInputRef.current?.focus();
       return;
     }
@@ -149,27 +146,7 @@ export default function GmailComposeModal({
     setStatus('sending');
 
     try {
-      // Direct POST to FormSubmit AJAX endpoint — formatted in dark-styled cards!
-      const formattedMessage = `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✦ NEW PORTFOLIO CONTACT INQUIRY ✦
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-FROM SENDER:
-${senderEmail.trim()}
-
-SUBJECT:
-${subject.trim() || 'Portfolio Collaboration Inquiry'}
-
-MESSAGE CONTENT:
-${message.trim()}
-
-${cc.trim() ? `CC: ${cc.trim()}\n` : ''}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sent securely from Tharun's Portfolio Contact Terminal
-Reply to this email directly to answer the sender.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-`.trim();
-
+      // Direct POST to FormSubmit without boring blue table
       await fetch('https://formsubmit.co/ajax/tharunchokkanc@gmail.com', {
         method: 'POST',
         headers: {
@@ -177,24 +154,23 @@ Reply to this email directly to answer the sender.
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          email: senderEmail.trim(),
+          Sender: senderEmail.trim(),
+          Subject: subject.trim() || 'Portfolio Collaboration Inquiry',
+          Message: message.trim(),
           _replyto: senderEmail.trim(),
           _subject: `[Portfolio Inquiry] ${subject.trim() || 'New Message from ' + senderEmail.trim()}`,
-          _template: 'table',
-          _captcha: 'false',
-          message: formattedMessage
+          _captcha: 'false'
         })
       });
 
       setStatus('success');
-      showToast('Message delivered directly to Tharun’s inbox! 🚀');
+      showToast('Message sent directly to Tharun! 🚀');
 
       setTimeout(() => {
         handleDiscard();
       }, 2500);
     } catch (err) {
       console.error('Direct send error:', err);
-      // Friendly fallback success
       setStatus('success');
       showToast('Message dispatched! Tharun will reply to your email.');
       setTimeout(() => {
@@ -231,30 +207,30 @@ Reply to this email directly to answer the sender.
     textareaRef.current?.focus();
   };
 
-  // Minimized dock pill in Dark Theme (placed safely above navbar at z-[100])
+  // Minimized dock pill in iOS Liquid Glass (placed safely above navbar at z-[100])
   if (isMinimized) {
     return (
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
-        className="fixed bottom-24 right-6 z-[100] flex items-center justify-between w-72 bg-[#1a1e26] text-white border border-white/15 rounded-xl px-4 py-2.5 shadow-2xl shadow-black/80 cursor-pointer hover:bg-[#222732] transition-colors select-none"
+        className="fixed bottom-24 right-6 z-[100] flex items-center justify-between w-72 bg-[#0c0f15]/85 backdrop-blur-2xl text-white border border-white/20 rounded-full px-4 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(16,185,129,0.12)] cursor-pointer hover:bg-[#131822]/90 transition-all select-none"
         onClick={() => setIsMinimized(false)}
       >
-        <div className="flex items-center gap-2 overflow-hidden">
+        <div className="flex items-center gap-2.5 overflow-hidden">
           <GmailLogoIcon className="w-4 h-4 shrink-0" />
-          <span className="text-sm font-medium truncate text-zinc-200">
+          <span className="text-xs font-medium truncate text-zinc-200">
             {subject.trim() ? subject : 'New Message (Draft)'}
           </span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               setIsMinimized(false);
             }}
-            className="p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white"
+            className="p-1 hover:bg-white/10 rounded-full text-zinc-400 hover:text-white transition-colors"
             title="Restore"
           >
             <Maximize2 className="w-3.5 h-3.5" />
@@ -265,7 +241,7 @@ Reply to this email directly to answer the sender.
               e.stopPropagation();
               onClose();
             }}
-            className="p-1 hover:bg-white/10 rounded text-zinc-400 hover:text-white"
+            className="p-1 hover:bg-white/10 rounded-full text-zinc-400 hover:text-white transition-colors"
             title="Close"
           >
             <X className="w-3.5 h-3.5" />
@@ -282,47 +258,50 @@ Reply to this email directly to answer the sender.
         High z-index (z-[100]) completely avoids and sits above the bottom navbar.
       */}
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-        {/* Soft dark blurred backdrop — clicking closes the modal */}
+        {/* Deep blurred backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black/75 backdrop-blur-md pointer-events-auto"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md pointer-events-auto"
           onClick={onClose}
         />
 
-        {/* Modern Centered Dark-Theme Gmail Compose Card Dialog */}
+        {/* 
+          iOS STYLE LIQUID GLASS DIALOG
+          - Smooth continuous squircle corners (rounded-[28px])
+          - Translucent deep glass material (bg-[#0a0d14]/80 + backdrop-blur-2xl)
+          - Specular perimeter reflection (border border-white/15 + inner white/20 highlight)
+          - Glowing vibrant dark ambient depth
+        */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 15 }}
           transition={{ type: 'spring', stiffness: 360, damping: 26 }}
-          className={`relative z-10 pointer-events-auto flex flex-col bg-[#12151c] text-white rounded-2xl border border-white/15 shadow-[0_24px_70px_rgba(0,0,0,0.8)] overflow-hidden transition-all duration-200 ${
+          className={`relative z-10 pointer-events-auto flex flex-col bg-[#0b0e14]/85 backdrop-blur-2xl text-white rounded-[28px] border border-white/[0.14] shadow-[0_30px_90px_rgba(0,0,0,0.9),0_0_50px_rgba(16,185,129,0.08),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden transition-all duration-200 ${
             isExpanded
               ? 'w-full max-w-4xl h-[92vh] sm:h-[86vh]'
               : 'w-full max-w-[620px] h-[550px] sm:h-[530px]'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Top Bar Header: Dark Slate Google Workspace `#1a1e26` */}
-          <div className="flex items-center justify-between px-4 py-2.5 bg-[#1a1e26] border-b border-white/10 select-none shrink-0">
-            <div className="flex items-center gap-2">
+          {/* Top Bar Header: Frosted Liquid Glass */}
+          <div className="flex items-center justify-between px-5 py-3 bg-white/[0.04] backdrop-blur-xl border-b border-white/[0.08] select-none shrink-0">
+            <div className="flex items-center gap-2.5">
               <GmailLogoIcon className="w-4 h-4" />
-              <span className="text-[13px] sm:text-[14px] font-medium text-zinc-100">
+              <span className="text-sm font-semibold tracking-wide text-zinc-100">
                 New Message
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hidden sm:inline-block">
-                Direct Delivery
               </span>
             </div>
 
             {/* Window Action Controls */}
-            <div className="flex items-center gap-0.5 text-zinc-400">
+            <div className="flex items-center gap-1 text-zinc-400">
               <button
                 type="button"
                 onClick={() => setIsMinimized(true)}
-                className="w-7 h-7 flex items-center justify-center rounded hover:bg-white/10 hover:text-white transition-colors"
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/10 hover:text-white transition-colors"
                 title="Minimize"
               >
                 <Minus className="w-4 h-4" />
@@ -330,7 +309,7 @@ Reply to this email directly to answer the sender.
               <button
                 type="button"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-7 h-7 hidden sm:flex items-center justify-center rounded hover:bg-white/10 hover:text-white transition-colors"
+                className="w-7 h-7 hidden sm:flex items-center justify-center rounded-full hover:bg-white/10 hover:text-white transition-colors"
                 title={isExpanded ? 'Exit full screen' : 'Full screen'}
               >
                 {isExpanded ? (
@@ -342,7 +321,7 @@ Reply to this email directly to answer the sender.
               <button
                 type="button"
                 onClick={onClose}
-                className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-500/20 hover:text-red-400 transition-colors"
                 title="Close"
               >
                 <X className="w-4 h-4" />
@@ -352,7 +331,7 @@ Reply to this email directly to answer the sender.
 
           {/* Toast Notification inside modal */}
           {toastMessage && (
-            <div className="bg-[#242933] text-zinc-200 border-b border-white/10 text-xs px-4 py-1.5 flex items-center justify-between shadow-md shrink-0 select-none animate-fade-in">
+            <div className="bg-[#141923] text-zinc-200 border-b border-white/10 text-xs px-4 py-2 flex items-center justify-between shadow-md shrink-0 select-none animate-fade-in">
               <span>{toastMessage}</span>
               <button
                 type="button"
@@ -364,50 +343,50 @@ Reply to this email directly to answer the sender.
             </div>
           )}
 
-          {/* Success Overlay View: Dark Card Theme */}
+          {/* Success Overlay View: Vibrant Liquid Glass Card */}
           {status === 'success' ? (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#12151c]">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-transparent">
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/30 shadow-lg shadow-emerald-500/10"
+                className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.25)]"
               >
                 <CheckCircle2 className="w-9 h-9" />
               </motion.div>
               <h3 className="text-xl font-semibold text-white mb-1">Message Delivered!</h3>
               <p className="text-sm font-medium text-emerald-400 mb-2">
-                Sent directly to Tharun’s Inbox &lt;{recipient}&gt;
+                Sent to Tharun’s Inbox &lt;{recipient}&gt;
               </p>
               
-              {/* Dark Summary Card */}
-              <div className="w-full max-w-sm bg-[#1a1e27] border border-white/10 rounded-xl p-3.5 my-4 text-left font-mono text-xs text-zinc-300 space-y-1">
-                <div className="flex items-center justify-between text-zinc-400 border-b border-white/5 pb-1">
+              {/* Vibrant Liquid Glass Summary Card */}
+              <div className="w-full max-w-sm bg-white/[0.04] backdrop-blur-xl border border-white/10 rounded-2xl p-4 my-4 text-left font-mono text-xs text-zinc-300 space-y-2 shadow-inner">
+                <div className="flex items-center justify-between text-zinc-400 border-b border-white/5 pb-1.5">
                   <span>From:</span>
                   <span className="text-white font-medium">{senderEmail}</span>
                 </div>
-                <div className="flex items-center justify-between text-zinc-400 pt-1">
+                <div className="flex items-center justify-between text-zinc-400 pt-0.5">
                   <span>Subject:</span>
                   <span className="text-zinc-200 truncate max-w-[200px]">{subject || 'Portfolio Inquiry'}</span>
                 </div>
               </div>
 
               <p className="text-xs text-zinc-400 max-w-sm mb-6 leading-relaxed">
-                Tharun has received your message and will reply directly to <span className="font-mono text-emerald-400 font-medium">{senderEmail}</span>.
+                Tharun has received your inquiry and will reply directly to <span className="font-mono text-emerald-400 font-medium">{senderEmail}</span>.
               </p>
               <button
                 type="button"
                 onClick={handleDiscard}
-                className="px-6 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-sm transition-all shadow-md active:scale-95"
+                className="px-7 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-semibold text-xs tracking-wide uppercase transition-all shadow-[0_4px_20px_rgba(16,185,129,0.4)] active:scale-95"
               >
                 Done
               </button>
             </div>
           ) : (
-            /* Form Fields Container in Dark Theme Cards */
-            <div className="flex flex-col flex-1 bg-[#12151c] overflow-hidden">
+            /* Form Fields Container in Liquid Glass */
+            <div className="flex flex-col flex-1 bg-transparent overflow-hidden">
               
-              {/* 1. "FROM" FIELD ROW: Clean single email input */}
-              <div className={`flex items-center px-4 py-2 border-b border-white/5 min-h-[44px] gap-2 shrink-0 transition-colors ${
+              {/* 1. "FROM" FIELD ROW: Clean single email input without any badges or white boxes */}
+              <div className={`flex items-center px-5 py-2.5 border-b border-white/[0.06] min-h-[46px] gap-2 shrink-0 transition-colors ${
                 fromError ? 'bg-red-500/10' : 'bg-transparent'
               }`}>
                 <span className="text-zinc-400 text-sm select-none w-14 shrink-0 font-medium">
@@ -424,57 +403,55 @@ Reply to this email directly to answer the sender.
                     if (fromError) setFromError('');
                   }}
                   placeholder="your.email@gmail.com"
-                  className="flex-1 text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent font-normal"
+                  className="flex-1 text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent font-normal border-none ring-0 shadow-none"
+                  style={{
+                    backgroundColor: 'transparent',
+                    WebkitBoxShadow: '0 0 0 1000px transparent inset'
+                  }}
                 />
-
-                {isValidEmail(senderEmail) && (
-                  <span className="text-[11px] text-emerald-400 font-medium hidden sm:inline-flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shrink-0">
-                    <Check className="w-3 h-3" /> Valid Email
-                  </span>
-                )}
               </div>
 
               {/* Inline From Error Alert */}
               {fromError && (
-                <div className="px-4 py-1.5 bg-red-500/15 border-b border-red-500/30 flex items-center gap-1.5 text-xs text-red-400 animate-fade-in shrink-0">
+                <div className="px-5 py-2 bg-red-500/15 border-b border-red-500/30 flex items-center gap-2 text-xs text-red-400 animate-fade-in shrink-0">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   <span>{fromError}</span>
                 </div>
               )}
 
-              {/* 2. "TO" FIELD ROW: Authentic Dark Google Contact Chip */}
-              <div className="flex items-center px-4 py-2 border-b border-white/5 min-h-[44px] gap-2 shrink-0">
+              {/* 2. "TO" FIELD ROW: Authentic Apple Glass Contact Chip */}
+              <div className="flex items-center px-5 py-2.5 border-b border-white/[0.06] min-h-[46px] gap-2 shrink-0">
                 <span className="text-zinc-400 text-sm font-medium select-none w-14 shrink-0">
                   To
                 </span>
 
                 <div className="flex-1 flex items-center gap-1.5 flex-wrap">
-                  {/* Recipient Contact Chip in Dark Style */}
+                  {/* Recipient Contact Chip in Liquid Glass Style */}
                   <div
                     onClick={handleCopyRecipient}
                     title="Click to copy email address"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.07] hover:bg-white/[0.12] border border-white/10 text-zinc-200 text-xs font-medium cursor-pointer transition-colors group"
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-zinc-200 text-xs font-medium cursor-pointer transition-all group backdrop-blur-md shadow-sm active:scale-95"
                   >
-                    <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] flex items-center justify-center font-bold">
+                    <span className="w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-black text-[9px] flex items-center justify-center font-bold">
                       T
                     </span>
                     <span className="font-medium text-white">Tharun Chokkanathan</span>
                     <span className="text-zinc-400 font-normal font-mono text-[11px]">&lt;{recipient}&gt;</span>
                     {copied ? (
-                      <Check className="w-3 h-3 text-emerald-400 ml-1" />
+                      <Check className="w-3 h-3 text-emerald-400 ml-0.5" />
                     ) : (
-                      <Copy className="w-3 h-3 text-zinc-400 group-hover:text-white ml-1 opacity-70" />
+                      <Copy className="w-3 h-3 text-zinc-400 group-hover:text-white ml-0.5 opacity-60" />
                     )}
                   </div>
                 </div>
 
                 {/* Cc / Bcc buttons on far right */}
-                <div className="flex items-center gap-2 text-xs text-zinc-400 font-medium shrink-0 select-none">
+                <div className="flex items-center gap-2.5 text-xs text-zinc-400 font-medium shrink-0 select-none">
                   {!showCc && (
                     <button
                       type="button"
                       onClick={() => setShowCc(true)}
-                      className="hover:text-white transition-colors"
+                      className="hover:text-emerald-400 transition-colors"
                     >
                       Cc
                     </button>
@@ -483,7 +460,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => setShowBcc(true)}
-                      className="hover:text-white transition-colors"
+                      className="hover:text-emerald-400 transition-colors"
                     >
                       Bcc
                     </button>
@@ -493,7 +470,7 @@ Reply to this email directly to answer the sender.
 
               {/* Optional Cc row */}
               {showCc && (
-                <div className="flex items-center px-4 py-1.5 border-b border-white/5 gap-2 shrink-0">
+                <div className="flex items-center px-5 py-2 border-b border-white/[0.06] gap-2 shrink-0">
                   <span className="text-zinc-400 text-sm select-none w-14 shrink-0">Cc</span>
                   <input
                     type="email"
@@ -501,11 +478,12 @@ Reply to this email directly to answer the sender.
                     onChange={(e) => setCc(e.target.value)}
                     placeholder="Cc recipients..."
                     className="flex-1 text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent"
+                    style={{ backgroundColor: 'transparent' }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowCc(false)}
-                    className="text-zinc-400 hover:text-white text-xs px-1"
+                    className="text-zinc-400 hover:text-white text-xs px-1.5"
                   >
                     ✕
                   </button>
@@ -514,7 +492,7 @@ Reply to this email directly to answer the sender.
 
               {/* Optional Bcc row */}
               {showBcc && (
-                <div className="flex items-center px-4 py-1.5 border-b border-white/5 gap-2 shrink-0">
+                <div className="flex items-center px-5 py-2 border-b border-white/[0.06] gap-2 shrink-0">
                   <span className="text-zinc-400 text-sm select-none w-14 shrink-0">Bcc</span>
                   <input
                     type="email"
@@ -522,11 +500,12 @@ Reply to this email directly to answer the sender.
                     onChange={(e) => setBcc(e.target.value)}
                     placeholder="Bcc recipients..."
                     className="flex-1 text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent"
+                    style={{ backgroundColor: 'transparent' }}
                   />
                   <button
                     type="button"
                     onClick={() => setShowBcc(false)}
-                    className="text-zinc-400 hover:text-white text-xs px-1"
+                    className="text-zinc-400 hover:text-white text-xs px-1.5"
                   >
                     ✕
                   </button>
@@ -534,7 +513,7 @@ Reply to this email directly to answer the sender.
               )}
 
               {/* 3. "SUBJECT" FIELD ROW */}
-              <div className="flex items-center px-4 py-2 border-b border-white/5 gap-2 shrink-0">
+              <div className="flex items-center px-5 py-2.5 border-b border-white/[0.06] gap-2 shrink-0">
                 <span className="text-zinc-400 text-sm font-medium select-none w-14 shrink-0">
                   Subject
                 </span>
@@ -544,17 +523,18 @@ Reply to this email directly to answer the sender.
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="Subject of your inquiry or project..."
                   className="flex-1 text-sm text-zinc-100 placeholder-zinc-500 outline-none bg-transparent font-normal"
+                  style={{ backgroundColor: 'transparent' }}
                 />
               </div>
 
-              {/* Attached Files Chips in Dark Style */}
+              {/* Attached Files Chips in Glass Style */}
               {attachedFiles.length > 0 && (
-                <div className="flex items-center gap-2 px-4 py-1.5 bg-white/[0.02] border-b border-white/5 overflow-x-auto shrink-0">
+                <div className="flex items-center gap-2 px-5 py-2 bg-white/[0.02] border-b border-white/[0.06] overflow-x-auto shrink-0">
                   <span className="text-[11px] text-zinc-400 shrink-0 font-medium">Attachments:</span>
                   {attachedFiles.map((f, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.08] border border-white/10 text-xs text-zinc-200 shrink-0"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.08] border border-white/10 text-xs text-zinc-200 shrink-0 backdrop-blur-md"
                     >
                       <Paperclip className="w-3 h-3 text-zinc-400" />
                       <span className="max-w-[140px] truncate">{f.name}</span>
@@ -573,35 +553,36 @@ Reply to this email directly to answer the sender.
               )}
 
               {/* 4. MESSAGE BODY TEXTAREA */}
-              <div className="flex-1 p-4 flex flex-col bg-[#12151c] overflow-y-auto">
+              <div className="flex-1 p-5 flex flex-col bg-transparent overflow-y-auto">
                 <textarea
                   ref={textareaRef}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Write your message here... I usually respond within a few hours!"
                   className="w-full flex-1 text-sm text-zinc-200 placeholder-zinc-500 outline-none resize-none bg-transparent leading-relaxed font-sans"
+                  style={{ backgroundColor: 'transparent' }}
                 />
               </div>
 
-              {/* 5. BOTTOM ACTION TOOLBAR in Dark Mode */}
-              <div className="flex items-center justify-between px-3 py-2.5 bg-[#171a22] border-t border-white/10 select-none gap-2 shrink-0">
-                <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                  {/* DIRECT SEND BUTTON (ZERO REDIRECT!) */}
+              {/* 5. BOTTOM ACTION TOOLBAR in Liquid Glass */}
+              <div className="flex items-center justify-between px-4 py-3 bg-white/[0.03] backdrop-blur-xl border-t border-white/[0.08] select-none gap-2 shrink-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* DIRECT SEND BUTTON (ZERO REDIRECT, VIBRANT DARK GRADIENT) */}
                   <button
                     type="button"
                     disabled={status === 'sending'}
                     onClick={handleDirectSend}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#1a73e8] hover:bg-[#1558b0] disabled:bg-[#1a73e8]/60 text-white text-sm font-medium rounded-full transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-[#1a73e8]/20"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 disabled:opacity-60 text-black font-semibold text-xs tracking-wide uppercase rounded-full transition-all active:scale-95 cursor-pointer shadow-[0_4px_22px_rgba(16,185,129,0.4)]"
                     title="Send message directly to Tharun's inbox without leaving the page"
                   >
                     {status === 'sending' ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />
                         <span>Sending...</span>
                       </>
                     ) : (
                       <>
-                        <Send className="w-3.5 h-3.5" />
+                        <Send className="w-3.5 h-3.5 text-black" />
                         <span>Send</span>
                       </>
                     )}
@@ -616,12 +597,12 @@ Reply to this email directly to answer the sender.
                     onChange={handleFileSelect}
                   />
 
-                  {/* Gmail Formatting / Attachment Icons in Dark Theme */}
+                  {/* Formatting / Attachment Icons in Frosted Glass */}
                   <div className="flex items-center text-zinc-400 ml-1">
                     <button
                       type="button"
                       onClick={() => showToast('Rich formatting active')}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
                       title="Formatting options"
                     >
                       <FormattingIcon className="w-4 h-4" />
@@ -629,7 +610,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
                       title="Attach files"
                     >
                       <Paperclip className="w-4 h-4" />
@@ -640,7 +621,7 @@ Reply to this email directly to answer the sender.
                         const link = prompt('Enter link URL:');
                         if (link) insertEmoji(` ${link} `);
                       }}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
                       title="Insert link"
                     >
                       <Link2 className="w-4 h-4" />
@@ -651,20 +632,20 @@ Reply to this email directly to answer the sender.
                       <button
                         type="button"
                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
+                        className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
                         title="Insert emoji"
                       >
                         <Smile className="w-4 h-4" />
                       </button>
 
                       {showEmojiPicker && (
-                        <div className="absolute bottom-11 left-0 bg-[#1e232d] border border-white/15 rounded-xl shadow-2xl p-2 z-50 flex gap-1.5">
+                        <div className="absolute bottom-12 left-0 bg-[#141822]/95 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl p-2.5 z-50 flex gap-1.5">
                           {['😊', '🚀', '🔥', '✨', '👍', '💡', '❤️', '🙌'].map((emoji) => (
                             <button
                               key={emoji}
                               type="button"
                               onClick={() => insertEmoji(emoji)}
-                              className="text-lg p-1.5 hover:bg-white/10 rounded transition-transform active:scale-125"
+                              className="text-lg p-1.5 hover:bg-white/10 rounded-xl transition-transform active:scale-125"
                             >
                               {emoji}
                             </button>
@@ -676,7 +657,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => showToast('Google Drive integration ready')}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
                       title="Insert files using Drive"
                     >
                       <DriveIcon className="w-4 h-4" />
@@ -684,7 +665,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
                       title="Insert photo"
                     >
                       <ImageIcon className="w-4 h-4" />
@@ -692,7 +673,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => showToast('Confidential mode enabled')}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
                       title="Toggle confidential mode"
                     >
                       <Lock className="w-4 h-4" />
@@ -700,7 +681,7 @@ Reply to this email directly to answer the sender.
                     <button
                       type="button"
                       onClick={() => insertEmoji('\n\nBest regards,\n')}
-                      className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
+                      className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors hidden sm:inline-flex"
                       title="Insert signature"
                     >
                       <SignatureIcon className="w-4 h-4" />
@@ -713,7 +694,7 @@ Reply to this email directly to answer the sender.
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors"
+                    className="p-2 rounded-full hover:bg-white/10 hover:text-red-400 transition-colors"
                     title="Discard draft"
                   >
                     <Trash2 className="w-4 h-4" />

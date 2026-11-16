@@ -38,3 +38,14 @@ nav button:active {
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
 }
+
+/* Prevent Chrome / Android autofill from injecting ugly white/blue background bars into dark inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0c0f15 inset !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
+  caret-color: #f4f4f5 !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
