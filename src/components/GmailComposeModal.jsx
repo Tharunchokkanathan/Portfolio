@@ -376,7 +376,7 @@ export default function GmailComposeModal({
               <button
                 type="button"
                 onClick={handleDiscard}
-                className="px-7 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-semibold text-xs tracking-wide uppercase transition-all shadow-[0_4px_20px_rgba(16,185,129,0.4)] active:scale-95"
+                className="px-6 py-2 rounded-full bg-[#0b57d0] hover:bg-[#1a73e8] text-white font-medium text-xs tracking-wide transition-all shadow-sm active:scale-95"
               >
                 Done
               </button>
@@ -432,7 +432,7 @@ export default function GmailComposeModal({
                     title="Click to copy email address"
                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-zinc-200 text-xs font-medium cursor-pointer transition-all group backdrop-blur-md shadow-sm active:scale-95"
                   >
-                    <span className="w-4 h-4 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-black text-[9px] flex items-center justify-center font-bold">
+                    <span className="w-4 h-4 rounded-full bg-[#0b57d0] text-white text-[10px] flex items-center justify-center font-bold">
                       T
                     </span>
                     <span className="font-medium text-white">Tharun Chokkanathan</span>
@@ -451,7 +451,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => setShowCc(true)}
-                      className="hover:text-emerald-400 transition-colors"
+                      className="hover:text-white transition-colors"
                     >
                       Cc
                     </button>
@@ -460,7 +460,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => setShowBcc(true)}
-                      className="hover:text-emerald-400 transition-colors"
+                      className="hover:text-white transition-colors"
                     >
                       Bcc
                     </button>
@@ -567,22 +567,22 @@ export default function GmailComposeModal({
               {/* 5. BOTTOM ACTION TOOLBAR in Liquid Glass */}
               <div className="flex items-center justify-between px-4 py-3 bg-white/[0.03] backdrop-blur-xl border-t border-white/[0.08] select-none gap-2 shrink-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {/* DIRECT SEND BUTTON (ZERO REDIRECT, VIBRANT DARK GRADIENT) */}
+                  {/* DIRECT SEND BUTTON (PROFESSIONAL GOOGLE BLUE PALETTE) */}
                   <button
                     type="button"
                     disabled={status === 'sending'}
                     onClick={handleDirectSend}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 disabled:opacity-60 text-black font-semibold text-xs tracking-wide uppercase rounded-full transition-all active:scale-95 cursor-pointer shadow-[0_4px_22px_rgba(16,185,129,0.4)]"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#0b57d0] hover:bg-[#1a73e8] disabled:bg-[#0b57d0]/60 text-white font-medium text-xs sm:text-sm rounded-full transition-all active:scale-95 cursor-pointer shadow-sm shadow-[#0b57d0]/30 select-none"
                     title="Send message directly to Tharun's inbox without leaving the page"
                   >
                     {status === 'sending' ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                         <span>Sending...</span>
                       </>
                     ) : (
                       <>
-                        <Send className="w-3.5 h-3.5 text-black" />
+                        <Send className="w-3.5 h-3.5 text-white" />
                         <span>Send</span>
                       </>
                     )}
