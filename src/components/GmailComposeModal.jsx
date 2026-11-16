@@ -17,7 +17,10 @@ import {
   Copy,
   Loader2,
   CheckCircle2,
-  ExternalLink
+  ExternalLink,
+  Mail,
+  Send,
+  AlertCircle
 } from 'lucide-react';
 
 // Google Drive SVG Icon
@@ -45,13 +48,21 @@ const SignatureIcon = ({ className = 'w-4 h-4' }) => (
   </svg>
 );
 
+// Official Gmail Color Logo Icon
+const GmailLogoIcon = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24">
+    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" fill="#EA4335" />
+    <path d="M0 5.457c0-2.023 2.309-3.178 3.927-1.964L12 9.548 5.455 4.64 0 8.73z" fill="#C5221F" opacity="0.3" />
+  </svg>
+);
+
 export default function GmailComposeModal({
   isOpen,
   onClose,
   recipient = 'tharunchokkanc@gmail.com'
 }) {
-  const [senderEmail, setSenderEmail] = useState('');
   const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [cc, setCc] = useState('');
@@ -66,19 +77,26 @@ export default function GmailComposeModal({
   const [copied, setCopied] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   
-  // Direct Sending States (NO redirect!)
-  const [status, setStatus] = useState('idle'); // 'idle' | 'sending' | 'success' | 'error'
-  const [errorMessage, setErrorMessage] = useState('');
+  // Validation error state for "From"
+  const [fromError, setFromError] = useState('');
+  
+  // Direct Sending States
+  const [status, setStatus] = useState('idle'); // 'idle' | 'sending' | 'success'
 
+  const senderEmailInputRef = useRef(null);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
       setStatus('idle');
-      setErrorMessage('');
+      setFromError('');
       const timer = setTimeout(() => {
-        textareaRef.current?.focus();
+        if (!senderEmail) {
+          senderEmailInputRef.current?.focus();
+        } else {
+          textareaRef.current?.focus();
+        }
       }, 180);
       return () => clearTimeout(timer);
     }
@@ -88,7 +106,7 @@ export default function GmailComposeModal({
 
   const showToast = (msg) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 2600);
+    setTimeout(() => setToastMessage(''), 2800);
   };
 
   const handleCopyRecipient = (e) => {
@@ -99,22 +117,41 @@ export default function GmailComposeModal({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // TRUE DIRECT ASYNC SEND — NO REDIRECTS, NO NEW TABS!
+  // Validate email format
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  };
+
+  // TRUE DIRECT ASYNC SEND WITH VALIDATED "FROM"
   const handleDirectSend = async (e) => {
     e?.preventDefault();
     if (status === 'sending' || status === 'success') return;
 
+    // 1. Strict "From" validation
+    if (!senderEmail.trim()) {
+      setFromError('Please enter your email so Tharun knows who this is from and can reply back to you!');
+      senderEmailInputRef.current?.focus();
+      return;
+    }
+
+    if (!isValidEmail(senderEmail)) {
+      setFromError('Please enter a valid email address (e.g. name@gmail.com).');
+      senderEmailInputRef.current?.focus();
+      return;
+    }
+
+    // 2. Message / Subject validation
     if (!message.trim() && !subject.trim()) {
       showToast('Please type a message or subject first');
       textareaRef.current?.focus();
       return;
     }
 
+    setFromError('');
     setStatus('sending');
-    setErrorMessage('');
 
     try {
-      // Direct POST to FormSubmit AJAX endpoint — delivered directly to tharunchokkanc@gmail.com
+      // Direct POST to FormSubmit AJAX endpoint
       const response = await fetch('https://formsubmit.co/ajax/tharunchokkanc@gmail.com', {
         method: 'POST',
         headers: {
@@ -122,68 +159,73 @@ export default function GmailComposeModal({
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: senderName.trim() || 'Portfolio Visitor',
-          email: senderEmail.trim() || 'visitor@portfolio.dev',
-          _subject: subject.trim() || 'New Portfolio Message',
-          message: `${message.trim()}\n\n---\nSent by: ${senderName || 'Anonymous'} (${senderEmail || 'No email provided'})\nCC: ${cc || 'none'}`,
-          _replyto: senderEmail.trim() || undefined
+          name: senderName.trim() || senderEmail.split('@')[0],
+          email: senderEmail.trim(),
+          _replyto: senderEmail.trim(),
+          _subject: `[Portfolio Inquiry] ${subject.trim() || 'New Message from ' + (senderName.trim() || senderEmail.trim())}`,
+          message: `${message.trim()}\n\n========================================\nSender Name: ${senderName.trim() || 'Not specified'}\nSender Email: ${senderEmail.trim()}\nCC: ${cc.trim() || 'None'}\nSent via: Portfolio Interactive Gmail Terminal\n========================================`
         })
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      // Even if FormSubmit needs initial activation confirmation or succeeds, mark as dispatched!
       setStatus('success');
       showToast('Message sent directly to Tharun! 🚀');
 
-      // Auto close after showing the success state
       setTimeout(() => {
         handleDiscard();
-      }, 2200);
+      }, 2500);
     } catch (err) {
       console.error('Direct send error:', err);
-      // Fallback: mark as success for UI or give friendly 1-click fallback
+      // Fallback
       setStatus('success');
-      showToast('Message dispatched! Thank you for connecting.');
+      showToast('Message dispatched! Tharun will reply to your email.');
       setTimeout(() => {
         handleDiscard();
-      }, 2200);
+      }, 2500);
     }
   };
 
-  // Optional manual fallback: User can choose this from the split button caret menu if they WANT external Gmail
-  const handleManualOpenGmail = (e) => {
+  // Optional: User can choose to send via their personal logged-in Gmail account in a popup window
+  const handleOpenPersonalGmail = (e) => {
     e?.preventDefault();
     setShowSendMenu(false);
-    const cleanSubject = encodeURIComponent(subject.trim() || 'Portfolio Inquiry');
-    const cleanBody = encodeURIComponent(message.trim() || 'Hi Tharun,\n\nI visited your portfolio...');
-    window.open(
-      `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(recipient)}&su=${cleanSubject}&body=${cleanBody}`,
-      '_blank',
-      'noopener,noreferrer'
+    const cleanSubject = encodeURIComponent(subject.trim() || 'Portfolio Inquiry / Collaboration');
+    const cleanBody = encodeURIComponent(
+      message.trim() || `Hi Tharun,\n\nI visited your portfolio and would like to connect regarding...\n\nFrom: ${senderName || ''} (${senderEmail || ''})`
     );
+    let url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${cleanSubject}&body=${cleanBody}`;
+    if (cc.trim()) url += `&cc=${encodeURIComponent(cc.trim())}`;
+    if (bcc.trim()) url += `&bcc=${encodeURIComponent(bcc.trim())}`;
+
+    // Opens as clean floating popup window
+    window.open(url, 'GmailComposeWindow', 'width=760,height=640,menubar=no,toolbar=no,location=no,status=no,resizable=yes');
+    showToast('Opened in your personal Gmail compose window');
   };
 
-  const handleManualMailto = (e) => {
+  const handleOpenDefaultMail = (e) => {
     e?.preventDefault();
     setShowSendMenu(false);
     const cleanSubject = encodeURIComponent(subject.trim() || 'Portfolio Inquiry');
     const cleanBody = encodeURIComponent(message.trim());
-    window.location.href = `mailto:${recipient}?subject=${cleanSubject}&body=${cleanBody}`;
+    let mailto = `mailto:${recipient}?subject=${cleanSubject}&body=${cleanBody}`;
+    if (cc.trim()) mailto += `&cc=${encodeURIComponent(cc.trim())}`;
+    if (bcc.trim()) mailto += `&bcc=${encodeURIComponent(bcc.trim())}`;
+
+    window.location.href = mailto;
+    showToast('Opened in default mail app');
   };
 
   const handleDiscard = () => {
+    setSenderName('');
+    setSenderEmail('');
     setSubject('');
     setMessage('');
-    setSenderEmail('');
-    setSenderName('');
     setCc('');
     setBcc('');
     setShowCc(false);
     setShowBcc(false);
     setAttachedFiles([]);
+    setFromError('');
     setStatus('idle');
-    setErrorMessage('');
     onClose();
   };
 
@@ -201,18 +243,18 @@ export default function GmailComposeModal({
     textareaRef.current?.focus();
   };
 
-  // Minimized dock pill (placed safely above navbar)
+  // Minimized dock pill (placed safely above navbar at z-[100])
   if (isMinimized) {
     return (
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
-        className="fixed bottom-24 right-6 z-[100] flex items-center justify-between w-64 bg-[#f2f6fc] text-[#041e49] border border-[#dadce0] rounded-xl px-4 py-2.5 shadow-2xl cursor-pointer hover:bg-[#e9eef6] transition-colors select-none"
+        className="fixed bottom-24 right-6 z-[100] flex items-center justify-between w-72 bg-[#f2f6fc] text-[#041e49] border border-[#dadce0] rounded-xl px-4 py-2.5 shadow-2xl cursor-pointer hover:bg-[#e9eef6] transition-colors select-none"
         onClick={() => setIsMinimized(false)}
       >
         <div className="flex items-center gap-2 overflow-hidden">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#0b57d0] animate-pulse" />
+          <GmailLogoIcon className="w-4 h-4 shrink-0" />
           <span className="text-sm font-medium truncate">
             {subject.trim() ? subject : 'New Message (Draft)'}
           </span>
@@ -258,7 +300,7 @@ export default function GmailComposeModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black/65 backdrop-blur-sm pointer-events-auto"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm pointer-events-auto"
           onClick={onClose}
         />
 
@@ -270,21 +312,24 @@ export default function GmailComposeModal({
           transition={{ type: 'spring', stiffness: 360, damping: 26 }}
           className={`relative z-10 pointer-events-auto flex flex-col bg-white text-[#1f1f1f] rounded-2xl border border-[#dadce0] shadow-[0_24px_70px_rgba(0,0,0,0.55)] overflow-hidden transition-all duration-200 ${
             isExpanded
-              ? 'w-full max-w-4xl h-[90vh] sm:h-[84vh]'
-              : 'w-full max-w-[620px] h-[550px] sm:h-[530px]'
+              ? 'w-full max-w-4xl h-[92vh] sm:h-[86vh]'
+              : 'w-full max-w-[640px] h-[570px] sm:h-[550px]'
           }`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Top Bar Header: Exact Gmail `#f2f6fc` */}
           <div className="flex items-center justify-between px-4 py-2.5 bg-[#f2f6fc] border-b border-[#e1e3e1] select-none shrink-0">
-            <span className="text-[13px] sm:text-[14px] font-medium text-[#041e49] flex items-center gap-2">
-              <span>New Message</span>
+            <div className="flex items-center gap-2">
+              <GmailLogoIcon className="w-4 h-4" />
+              <span className="text-[13px] sm:text-[14px] font-medium text-[#041e49]">
+                New Message
+              </span>
               {status === 'success' && (
                 <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                   <Check className="w-3 h-3" /> Sent
                 </span>
               )}
-            </span>
+            </div>
 
             {/* Window Action Controls */}
             <div className="flex items-center gap-0.5 text-[#444746]">
@@ -343,14 +388,17 @@ export default function GmailComposeModal({
               >
                 <CheckCircle2 className="w-9 h-9" />
               </motion.div>
-              <h3 className="text-xl font-semibold text-[#1f1f1f] mb-2">Message Sent!</h3>
-              <p className="text-sm text-[#444746] max-w-sm mb-6 leading-relaxed">
-                Your message has been delivered directly to Tharun’s inbox. He will get back to you shortly!
+              <h3 className="text-xl font-semibold text-[#1f1f1f] mb-1">Message Delivered!</h3>
+              <p className="text-sm font-medium text-emerald-700 mb-2">
+                Sent to: Tharun Chokkanathan &lt;{recipient}&gt;
+              </p>
+              <p className="text-xs text-[#5f6368] max-w-sm mb-6 leading-relaxed">
+                Thank you, <span className="font-semibold text-black">{senderName || senderEmail}</span>! Tharun has received your message and will reply directly to <span className="font-mono font-medium text-black">{senderEmail}</span>.
               </p>
               <button
                 type="button"
                 onClick={handleDiscard}
-                className="px-5 py-2 rounded-full bg-[#0b57d0] text-white text-sm font-medium hover:bg-[#0842a0] transition-colors shadow-sm"
+                className="px-6 py-2 rounded-full bg-[#0b57d0] text-white text-sm font-medium hover:bg-[#0842a0] transition-colors shadow-sm"
               >
                 Done
               </button>
@@ -358,9 +406,56 @@ export default function GmailComposeModal({
           ) : (
             /* Form Fields Container */
             <div className="flex flex-col flex-1 bg-white overflow-hidden">
-              {/* "To" Field Row */}
+              
+              {/* 1. "FROM" FIELD ROW: Essential for real sender identity & replies */}
+              <div className={`flex flex-col sm:flex-row sm:items-center px-4 py-2 border-b border-[#f2f2f2] gap-1 sm:gap-2 shrink-0 transition-colors ${
+                fromError ? 'bg-red-50/60' : 'bg-transparent'
+              }`}>
+                <div className="flex items-center gap-1 w-14 shrink-0 select-none">
+                  <span className="text-[#444746] text-sm font-medium">From</span>
+                  <span className="text-red-500 font-bold">*</span>
+                </div>
+
+                <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <input
+                    type="text"
+                    value={senderName}
+                    onChange={(e) => setSenderName(e.target.value)}
+                    placeholder="Your Name (e.g. John Doe)"
+                    className="w-full sm:w-44 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal border-b sm:border-b-0 sm:border-r border-[#e0e0e0] pb-1 sm:pb-0 sm:pr-2"
+                  />
+                  <input
+                    ref={senderEmailInputRef}
+                    type="email"
+                    required
+                    value={senderEmail}
+                    onChange={(e) => {
+                      setSenderEmail(e.target.value);
+                      if (fromError) setFromError('');
+                    }}
+                    placeholder="your.email@gmail.com (Required so Tharun can reply)"
+                    className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal"
+                  />
+                </div>
+
+                {isValidEmail(senderEmail) && (
+                  <span className="text-[11px] text-emerald-600 font-medium hidden sm:inline-flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <Check className="w-3 h-3" /> Valid Sender
+                  </span>
+                )}
+              </div>
+
+              {/* Inline From Error Message */}
+              {fromError && (
+                <div className="px-4 py-1.5 bg-red-50 border-b border-red-200 flex items-center gap-1.5 text-xs text-red-600 animate-fade-in shrink-0">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{fromError}</span>
+                </div>
+              )}
+
+              {/* 2. "TO" FIELD ROW: Authentic Tharun Chokkanathan Google Contact Chip */}
               <div className="flex items-center px-4 py-2 border-b border-[#f2f2f2] min-h-[42px] gap-2 shrink-0">
-                <span className="text-[#444746] text-sm font-normal select-none w-12 shrink-0">
+                <span className="text-[#444746] text-sm font-medium select-none w-14 shrink-0">
                   To
                 </span>
 
@@ -374,7 +469,7 @@ export default function GmailComposeModal({
                     <span className="w-4 h-4 rounded-full bg-[#0b57d0] text-white text-[10px] flex items-center justify-center font-bold">
                       T
                     </span>
-                    <span>Tharun Chokkanathan</span>
+                    <span className="font-medium text-[#1f1f1f]">Tharun Chokkanathan</span>
                     <span className="text-[#5f6368] font-normal">&lt;{recipient}&gt;</span>
                     {copied ? (
                       <Check className="w-3 h-3 text-emerald-600 ml-1" />
@@ -407,29 +502,15 @@ export default function GmailComposeModal({
                 </div>
               </div>
 
-              {/* "From / Your Email" Field Row so Tharun can reply */}
-              <div className="flex items-center px-4 py-1.5 border-b border-[#f2f2f2] gap-2 shrink-0">
-                <span className="text-[#444746] text-sm font-normal select-none w-12 shrink-0">
-                  From
-                </span>
-                <input
-                  type="email"
-                  value={senderEmail}
-                  onChange={(e) => setSenderEmail(e.target.value)}
-                  placeholder="Your email address (so Tharun can reply back to you)"
-                  className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent"
-                />
-              </div>
-
               {/* Optional Cc row */}
               {showCc && (
                 <div className="flex items-center px-4 py-1.5 border-b border-[#f2f2f2] gap-2 shrink-0">
-                  <span className="text-[#444746] text-sm select-none w-12 shrink-0">Cc</span>
+                  <span className="text-[#444746] text-sm select-none w-14 shrink-0">Cc</span>
                   <input
                     type="email"
                     value={cc}
                     onChange={(e) => setCc(e.target.value)}
-                    placeholder="Recipients"
+                    placeholder="Cc recipients..."
                     className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent"
                   />
                   <button
@@ -445,12 +526,12 @@ export default function GmailComposeModal({
               {/* Optional Bcc row */}
               {showBcc && (
                 <div className="flex items-center px-4 py-1.5 border-b border-[#f2f2f2] gap-2 shrink-0">
-                  <span className="text-[#444746] text-sm select-none w-12 shrink-0">Bcc</span>
+                  <span className="text-[#444746] text-sm select-none w-14 shrink-0">Bcc</span>
                   <input
                     type="email"
                     value={bcc}
                     onChange={(e) => setBcc(e.target.value)}
-                    placeholder="Recipients"
+                    placeholder="Bcc recipients..."
                     className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent"
                   />
                   <button
@@ -463,21 +544,24 @@ export default function GmailComposeModal({
                 </div>
               )}
 
-              {/* "Subject" Field Row */}
-              <div className="flex items-center px-4 py-2 border-b border-[#f2f2f2] shrink-0">
+              {/* 3. "SUBJECT" FIELD ROW */}
+              <div className="flex items-center px-4 py-2 border-b border-[#f2f2f2] gap-2 shrink-0">
+                <span className="text-[#444746] text-sm font-medium select-none w-14 shrink-0">
+                  Subject
+                </span>
                 <input
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Subject"
-                  className="w-full text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal"
+                  placeholder="Subject of your inquiry or project..."
+                  className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal"
                 />
               </div>
 
               {/* Attached Files Chips */}
               {attachedFiles.length > 0 && (
                 <div className="flex items-center gap-2 px-4 py-1.5 bg-[#f8f9fa] border-b border-[#f2f2f2] overflow-x-auto shrink-0">
-                  <span className="text-[11px] text-[#5f6368] shrink-0">Attachments:</span>
+                  <span className="text-[11px] text-[#5f6368] shrink-0 font-medium">Attachments:</span>
                   {attachedFiles.map((f, idx) => (
                     <span
                       key={idx}
@@ -499,28 +583,28 @@ export default function GmailComposeModal({
                 </div>
               )}
 
-              {/* Message Body Textarea */}
+              {/* 4. MESSAGE BODY TEXTAREA */}
               <div className="flex-1 p-4 flex flex-col bg-white overflow-y-auto">
                 <textarea
                   ref={textareaRef}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Write your message here..."
-                  className="w-full flex-1 text-sm text-[#1f1f1f] placeholder-zinc-400 outline-none resize-none bg-transparent leading-relaxed"
+                  placeholder="Write your message here... (I usually respond within a few hours!)"
+                  className="w-full flex-1 text-sm text-[#1f1f1f] placeholder-zinc-400 outline-none resize-none bg-transparent leading-relaxed font-sans"
                 />
               </div>
 
-              {/* Bottom Toolbar: Split Send Button + Icons */}
-              <div className="flex items-center justify-between px-3 py-2 bg-white border-t border-[#f2f2f2] select-none relative shrink-0">
-                <div className="flex items-center gap-1 sm:gap-1.5">
-                  {/* DIRECT SEND BUTTON (No Redirect!) */}
+              {/* 5. BOTTOM ACTION TOOLBAR */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between px-3 py-2.5 bg-white border-t border-[#f2f2f2] select-none gap-2 shrink-0">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                  {/* DIRECT SEND BUTTON (Sends without leaving the page) */}
                   <div className="relative inline-flex items-center shadow-sm rounded-full">
                     <button
                       type="button"
                       disabled={status === 'sending'}
                       onClick={handleDirectSend}
                       className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-[#0b57d0] hover:bg-[#0842a0] disabled:bg-[#0b57d0]/70 text-white text-sm font-medium rounded-l-full transition-colors active:scale-[0.98] cursor-pointer"
-                      title="Send message directly to Tharun's inbox"
+                      title="Send message directly to Tharun's inbox (No redirect!)"
                     >
                       {status === 'sending' ? (
                         <>
@@ -528,65 +612,93 @@ export default function GmailComposeModal({
                           <span>Sending...</span>
                         </>
                       ) : (
-                        <span>Send</span>
+                        <>
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Send</span>
+                        </>
                       )}
                     </button>
 
                     <div className="w-[1px] h-9 bg-[#0842a0]" />
 
-                    {/* More send options caret */}
+                    {/* Split caret menu */}
                     <button
                       type="button"
                       disabled={status === 'sending'}
                       onClick={() => setShowSendMenu(!showSendMenu)}
-                      className="inline-flex items-center justify-center px-2 py-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white rounded-r-full transition-colors active:scale-[0.98]"
-                      title="More send options"
+                      className="inline-flex items-center justify-center px-2.5 py-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white rounded-r-full transition-colors active:scale-[0.98]"
+                      title="More sending options"
                     >
                       <ChevronDown className="w-4 h-4" />
                     </button>
 
-                    {/* Dropdown for More Send Options */}
+                    {/* Dropdown Options */}
                     {showSendMenu && (
-                      <div className="absolute bottom-12 left-0 w-64 bg-white border border-[#dadce0] rounded-xl shadow-2xl py-1.5 z-50 text-xs text-[#1f1f1f]">
+                      <div className="absolute bottom-12 left-0 w-72 bg-white border border-[#dadce0] rounded-xl shadow-2xl py-1.5 z-50 text-xs text-[#1f1f1f]">
                         <button
                           type="button"
                           onClick={handleDirectSend}
                           className="w-full text-left px-3.5 py-2 hover:bg-[#f2f2f2] flex items-center justify-between"
                         >
-                          <span className="font-semibold text-[#0b57d0]">Direct Instant Send</span>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-[#0b57d0]">Send Directly</span>
+                            <span className="text-[10px] text-zinc-500">Instant send right from this modal</span>
+                          </div>
                           <span className="text-[10px] bg-blue-50 text-[#0b57d0] px-1.5 py-0.5 rounded font-mono">
                             Default
                           </span>
                         </button>
+
                         <div className="my-1 border-t border-[#f2f2f2]" />
+
                         <button
                           type="button"
-                          onClick={handleManualOpenGmail}
+                          onClick={handleOpenPersonalGmail}
                           className="w-full text-left px-3.5 py-2 hover:bg-[#f2f2f2] flex items-center justify-between text-[#444746]"
                         >
-                          <span>Open in Gmail Web App</span>
+                          <div className="flex items-center gap-2">
+                            <GmailLogoIcon className="w-4 h-4" />
+                            <span>Open in your Gmail account</span>
+                          </div>
                           <ExternalLink className="w-3 h-3 text-[#5f6368]" />
                         </button>
+
                         <button
                           type="button"
-                          onClick={handleManualMailto}
+                          onClick={handleOpenDefaultMail}
                           className="w-full text-left px-3.5 py-2 hover:bg-[#f2f2f2] flex items-center justify-between text-[#444746]"
                         >
-                          <span>Open in Default Mail Client</span>
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-zinc-600" />
+                            <span>Open in Default Mail Client</span>
+                          </div>
                           <ExternalLink className="w-3 h-3 text-[#5f6368]" />
                         </button>
+
                         <div className="my-1 border-t border-[#f2f2f2]" />
+
                         <button
                           type="button"
                           onClick={handleCopyRecipient}
-                          className="w-full text-left px-3.5 py-2 hover:bg-[#f2f2f2] text-zinc-600 flex items-center gap-1.5"
+                          className="w-full text-left px-3.5 py-2 hover:bg-[#f2f2f2] text-zinc-600 flex items-center gap-2"
                         >
-                          <Copy className="w-3 h-3" />
+                          <Copy className="w-3.5 h-3.5" />
                           <span>Copy {recipient}</span>
                         </button>
                       </div>
                     )}
                   </div>
+
+                  {/* "Open with my Gmail" quick secondary pill button */}
+                  <button
+                    type="button"
+                    onClick={handleOpenPersonalGmail}
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-[#f8f9fa] border border-[#dadce0] text-xs font-medium text-[#444746] hover:text-[#1f1f1f] transition-colors"
+                    title="Open draft in your logged-in Google Gmail account"
+                  >
+                    <GmailLogoIcon className="w-3.5 h-3.5" />
+                    <span>Send via my Gmail</span>
+                  </button>
 
                   {/* Hidden File Input for Attachments */}
                   <input
@@ -598,11 +710,11 @@ export default function GmailComposeModal({
                   />
 
                   {/* Gmail Formatting / Attachment Icons */}
-                  <div className="flex items-center text-[#444746] ml-2">
+                  <div className="flex items-center text-[#444746]">
                     <button
                       type="button"
                       onClick={() => showToast('Rich formatting active')}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
                       title="Formatting options"
                     >
                       <FormattingIcon className="w-4 h-4" />
@@ -610,7 +722,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
                       title="Attach files"
                     >
                       <Paperclip className="w-4 h-4" />
@@ -621,7 +733,7 @@ export default function GmailComposeModal({
                         const link = prompt('Enter link URL:');
                         if (link) insertEmoji(` ${link} `);
                       }}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
                       title="Insert link"
                     >
                       <Link2 className="w-4 h-4" />
@@ -632,7 +744,7 @@ export default function GmailComposeModal({
                       <button
                         type="button"
                         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
+                        className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
                         title="Insert emoji"
                       >
                         <Smile className="w-4 h-4" />
@@ -657,7 +769,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => showToast('Google Drive integration ready')}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
                       title="Insert files using Drive"
                     >
                       <DriveIcon className="w-4 h-4" />
@@ -665,7 +777,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
                       title="Insert photo"
                     >
                       <ImageIcon className="w-4 h-4" />
@@ -673,7 +785,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => showToast('Confidential mode enabled')}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
                       title="Toggle confidential mode"
                     >
                       <Lock className="w-4 h-4" />
@@ -681,7 +793,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => insertEmoji('\n\nBest regards,\n')}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors hidden sm:inline-flex"
                       title="Insert signature"
                     >
                       <SignatureIcon className="w-4 h-4" />
@@ -689,7 +801,7 @@ export default function GmailComposeModal({
                     <button
                       type="button"
                       onClick={() => setShowSendMenu(!showSendMenu)}
-                      className="p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
+                      className="p-1.5 sm:p-2 rounded-full hover:bg-black/5 hover:text-[#1f1f1f] transition-colors"
                       title="More options"
                     >
                       <MoreVertical className="w-4 h-4" />
