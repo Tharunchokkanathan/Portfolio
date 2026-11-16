@@ -27,7 +27,6 @@ export default function Contact() {
       label: 'Email Me',
       value: 'email',
       onClick: () => setIsEmailModalOpen(true),
-      href: `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(socials.email)}`,
       icon: <Mail className="w-3.5 h-3.5 text-[#EA4335]" />
     },
     {

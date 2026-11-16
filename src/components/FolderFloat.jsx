@@ -124,12 +124,14 @@ export default function FolderFloat({
             return (
               <motion.a
                 key={item.value || i}
-                href={item.href || '#'}
+                href={item.href || undefined}
                 target={item.href ? "_blank" : undefined}
                 rel={item.href ? "noopener noreferrer" : undefined}
+                role={item.onClick ? "button" : undefined}
                 onClick={(e) => {
                   if (item.onClick) {
                     e.preventDefault();
+                    e.stopPropagation();
                     item.onClick();
                   }
                 }}
