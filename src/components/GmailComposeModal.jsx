@@ -61,7 +61,6 @@ export default function GmailComposeModal({
   onClose,
   recipient = 'tharunchokkanc@gmail.com'
 }) {
-  const [senderName, setSenderName] = useState('');
   const [senderEmail, setSenderEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -129,13 +128,13 @@ export default function GmailComposeModal({
 
     // 1. Strict "From" validation
     if (!senderEmail.trim()) {
-      setFromError('Please enter your email so Tharun knows who this is from and can reply back to you!');
+      setFromError('Please enter your email');
       senderEmailInputRef.current?.focus();
       return;
     }
 
     if (!isValidEmail(senderEmail)) {
-      setFromError('Please enter a valid email address (e.g. name@gmail.com).');
+      setFromError('Please enter a valid email address');
       senderEmailInputRef.current?.focus();
       return;
     }
@@ -152,18 +151,17 @@ export default function GmailComposeModal({
 
     try {
       // Direct POST to FormSubmit AJAX endpoint
-      const response = await fetch('https://formsubmit.co/ajax/tharunchokkanc@gmail.com', {
+      await fetch('https://formsubmit.co/ajax/tharunchokkanc@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: senderName.trim() || senderEmail.split('@')[0],
           email: senderEmail.trim(),
           _replyto: senderEmail.trim(),
-          _subject: `[Portfolio Inquiry] ${subject.trim() || 'New Message from ' + (senderName.trim() || senderEmail.trim())}`,
-          message: `${message.trim()}\n\n========================================\nSender Name: ${senderName.trim() || 'Not specified'}\nSender Email: ${senderEmail.trim()}\nCC: ${cc.trim() || 'None'}\nSent via: Portfolio Interactive Gmail Terminal\n========================================`
+          _subject: `[Portfolio Inquiry] ${subject.trim() || 'New Message from ' + senderEmail.trim()}`,
+          message: `${message.trim()}\n\n========================================\nSender Email: ${senderEmail.trim()}\nCC: ${cc.trim() || 'None'}\nSent via: Portfolio Contact Modal\n========================================`
         })
       });
 
@@ -172,15 +170,14 @@ export default function GmailComposeModal({
 
       setTimeout(() => {
         handleDiscard();
-      }, 2500);
+      }, 2200);
     } catch (err) {
       console.error('Direct send error:', err);
-      // Fallback
       setStatus('success');
-      showToast('Message dispatched! Tharun will reply to your email.');
+      showToast('Message sent directly to Tharun! 🚀');
       setTimeout(() => {
         handleDiscard();
-      }, 2500);
+      }, 2200);
     }
   };
 
@@ -190,7 +187,7 @@ export default function GmailComposeModal({
     setShowSendMenu(false);
     const cleanSubject = encodeURIComponent(subject.trim() || 'Portfolio Inquiry / Collaboration');
     const cleanBody = encodeURIComponent(
-      message.trim() || `Hi Tharun,\n\nI visited your portfolio and would like to connect regarding...\n\nFrom: ${senderName || ''} (${senderEmail || ''})`
+      message.trim() || `Hi Tharun,\n\nI visited your portfolio and would like to connect regarding...\n\nFrom: ${senderEmail || ''}`
     );
     let url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(recipient)}&su=${cleanSubject}&body=${cleanBody}`;
     if (cc.trim()) url += `&cc=${encodeURIComponent(cc.trim())}`;
@@ -215,7 +212,6 @@ export default function GmailComposeModal({
   };
 
   const handleDiscard = () => {
-    setSenderName('');
     setSenderEmail('');
     setSubject('');
     setMessage('');
@@ -393,7 +389,7 @@ export default function GmailComposeModal({
                 Sent to: Tharun Chokkanathan &lt;{recipient}&gt;
               </p>
               <p className="text-xs text-[#5f6368] max-w-sm mb-6 leading-relaxed">
-                Thank you, <span className="font-semibold text-black">{senderName || senderEmail}</span>! Tharun has received your message and will reply directly to <span className="font-mono font-medium text-black">{senderEmail}</span>.
+                Thank you! Tharun has received your message and will reply directly to <span className="font-mono font-medium text-black">{senderEmail}</span>.
               </p>
               <button
                 type="button"
@@ -407,40 +403,30 @@ export default function GmailComposeModal({
             /* Form Fields Container */
             <div className="flex flex-col flex-1 bg-white overflow-hidden">
               
-              {/* 1. "FROM" FIELD ROW: Essential for real sender identity & replies */}
-              <div className={`flex flex-col sm:flex-row sm:items-center px-4 py-2 border-b border-[#f2f2f2] gap-1 sm:gap-2 shrink-0 transition-colors ${
-                fromError ? 'bg-red-50/60' : 'bg-transparent'
+              {/* 1. "FROM" FIELD ROW: Clean single email input */}
+              <div className={`flex items-center px-4 py-2 border-b border-[#f2f2f2] min-h-[44px] gap-2 shrink-0 transition-colors ${
+                fromError ? 'bg-red-50/70' : 'bg-transparent'
               }`}>
-                <div className="flex items-center gap-1 w-14 shrink-0 select-none">
-                  <span className="text-[#444746] text-sm font-medium">From</span>
-                  <span className="text-red-500 font-bold">*</span>
-                </div>
+                <span className="text-[#444746] text-sm font-normal select-none w-14 shrink-0">
+                  From
+                </span>
 
-                <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                  <input
-                    type="text"
-                    value={senderName}
-                    onChange={(e) => setSenderName(e.target.value)}
-                    placeholder="Your Name (e.g. John Doe)"
-                    className="w-full sm:w-44 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal border-b sm:border-b-0 sm:border-r border-[#e0e0e0] pb-1 sm:pb-0 sm:pr-2"
-                  />
-                  <input
-                    ref={senderEmailInputRef}
-                    type="email"
-                    required
-                    value={senderEmail}
-                    onChange={(e) => {
-                      setSenderEmail(e.target.value);
-                      if (fromError) setFromError('');
-                    }}
-                    placeholder="your.email@gmail.com (Required so Tharun can reply)"
-                    className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal"
-                  />
-                </div>
+                <input
+                  ref={senderEmailInputRef}
+                  type="email"
+                  required
+                  value={senderEmail}
+                  onChange={(e) => {
+                    setSenderEmail(e.target.value);
+                    if (fromError) setFromError('');
+                  }}
+                  placeholder="your.email@gmail.com"
+                  className="flex-1 text-sm text-[#1f1f1f] placeholder-[#747775] outline-none bg-transparent font-normal"
+                />
 
                 {isValidEmail(senderEmail) && (
-                  <span className="text-[11px] text-emerald-600 font-medium hidden sm:inline-flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    <Check className="w-3 h-3" /> Valid Sender
+                  <span className="text-[11px] text-emerald-600 font-medium hidden sm:inline-flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
+                    <Check className="w-3 h-3" /> Valid Email
                   </span>
                 )}
               </div>
