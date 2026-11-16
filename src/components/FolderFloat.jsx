@@ -124,9 +124,15 @@ export default function FolderFloat({
             return (
               <motion.a
                 key={item.value || i}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={item.href || '#'}
+                target={item.href ? "_blank" : undefined}
+                rel={item.href ? "noopener noreferrer" : undefined}
+                onClick={(e) => {
+                  if (item.onClick) {
+                    e.preventDefault();
+                    item.onClick();
+                  }
+                }}
                 drag
                 dragConstraints={{
                   left: -spread - 50,

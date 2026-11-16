@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, ArrowUpRight } from 'lucide-react';
 import { LinkedinIcon, GithubIcon, XIcon } from './Icons';
 import FolderFloat from './FolderFloat';
 import BlurText from './BlurText';
+import GmailComposeModal from './GmailComposeModal';
 import { portfolioData } from '../data/portfolioData';
 
 export default function Contact() {
   const { personal, socials } = portfolioData;
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const folderLinks = [
     {
@@ -24,7 +26,8 @@ export default function Contact() {
     {
       label: 'Email Me',
       value: 'email',
-      href: `https://mail.google.com/mail/?extsrc=mailto&url=mailto%3A${socials.email}`,
+      onClick: () => setIsEmailModalOpen(true),
+      href: `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(socials.email)}`,
       icon: <Mail className="w-3.5 h-3.5 text-[#EA4335]" />
     },
     {
@@ -106,6 +109,13 @@ export default function Contact() {
           © {new Date().getFullYear()} {personal.name}. All rights reserved.
         </div>
       </div>
+
+      {/* Modern Floating Gmail Compose Modal */}
+      <GmailComposeModal
+        isOpen={isEmailModalOpen}
+        onClose={() => setIsEmailModalOpen(false)}
+        recipient={socials.email}
+      />
     </footer>
   );
 }
