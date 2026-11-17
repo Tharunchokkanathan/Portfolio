@@ -62,7 +62,7 @@ const ParticleText = ({
   clickBurst = true,
   burstStrength = 1,
   pointerRepel = 40,
-  repelRadius = 120,
+  repelRadius = null,
   idleDrift = 0.7,
   trigger = 'hover',
   fontSize = 'clamp(3rem, 12vw, 8rem)',
@@ -271,7 +271,7 @@ const ParticleText = ({
       if (!s || !particles.length) return;
       const strength = Math.max(0, Number(s.burstStrength) || 0);
       if (!strength) return;
-      const radius = 90 + 70 * Math.sqrt(strength) + s.repelRadius * 0.25;
+      const radius = 90 + 70 * Math.sqrt(strength) + (s.repelRadius || 0) * 0.25;
 
       for (const particle of particles) {
         const dx = particle.x - x;
@@ -360,10 +360,10 @@ const ParticleText = ({
       const sizeBase = Math.max(0.1, Number(s.particleSize) || 0);
       const restLength = Math.max(2, sizeBase * 0.8 + Math.max(2, Math.floor(Number(s.density) || 0)) * 0.7);
 
-      // Circular dispersion size strictly matches font size (Image 2)
-      const fontCircleRadius = (currentFontSize || 60) * 0.48;
-      const effectiveRadius = s.repelRadius
-        ? Math.min(Number(s.repelRadius), fontCircleRadius)
+      // Circular dispersion size reduced to 3/4 of font size
+      const fontCircleRadius = (currentFontSize || 60) * 0.375;
+      const effectiveRadius = s.repelRadius != null && Number(s.repelRadius) > 0
+        ? Number(s.repelRadius)
         : fontCircleRadius;
       const effectiveRepel = effectiveRadius * 0.95;
 
