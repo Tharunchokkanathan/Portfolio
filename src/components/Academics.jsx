@@ -12,8 +12,8 @@ export default function Academics() {
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
         <div>
           <BlurText delay={0} blur={8} distance={20}>
-            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-400 mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#E97DA6] mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E97DA6] shadow-[0_0_8px_rgba(233,125,166,0.6)]"></span>
               Academic Pathway
             </div>
           </BlurText>
@@ -38,13 +38,13 @@ export default function Academics() {
             blur={10}
             distance={30}
           >
-            <div className="p-7 sm:p-8 rounded-3xl flex flex-col justify-between transition-all duration-300 relative overflow-hidden bg-gradient-to-br from-[#0a0d0b] via-[#090b0a] to-[#0d1c14]/40 border border-emerald-500/25 shadow-xl shadow-black/50">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="p-7 sm:p-8 rounded-3xl flex flex-col justify-between transition-all duration-300 relative overflow-hidden bg-gradient-to-br from-[#0a0a0c] via-[#090709] to-[#2D0A1E]/30 border border-[#B94273]/30 shadow-xl shadow-black/50">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-[#E97DA6]/8 rounded-full blur-3xl pointer-events-none" />
 
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono px-3 py-1 rounded-full border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-semibold">
+                    <span className="text-xs font-mono px-3 py-1 rounded-full border bg-[#E97DA6]/12 text-[#E97DA6] border-[#E97DA6]/25 font-semibold">
                       {education[0].level}
                     </span>
                     {education[0].period && (
@@ -55,7 +55,7 @@ export default function Academics() {
                     )}
                   </div>
 
-                  <div className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                  <div className="text-xs font-mono font-bold text-[#FFC9B9] bg-[#B94273]/20 px-3 py-1 rounded-full border border-[#B94273]/35">
                     {education[0].score}
                   </div>
                 </div>
@@ -72,7 +72,7 @@ export default function Academics() {
                   {education[0].affiliation && (
                     <>
                       <span className="text-zinc-600">•</span>
-                      <span className="text-emerald-400/90 font-mono text-xs">{education[0].affiliation}</span>
+                      <span className="text-[#E97DA6]/90 font-mono text-xs">{education[0].affiliation}</span>
                     </>
                   )}
                 </div>
@@ -84,7 +84,7 @@ export default function Academics() {
 
               <div className="pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-zinc-500">
                 <span>Verification: Verified Academic Record</span>
-                <span className="text-emerald-400/80 font-semibold">01</span>
+                <span className="text-[#E97DA6]/85 font-semibold">01</span>
               </div>
             </div>
           </BlurText>
@@ -116,7 +116,7 @@ export default function Academics() {
                       )}
                     </div>
 
-                    <div className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                    <div className="text-xs font-mono font-bold text-[#FFC9B9] bg-[#B94273]/20 px-3 py-1 rounded-full border border-[#B94273]/35">
                       {edu.score}
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export default function Academics() {
                 {/* Bottom Tag */}
                 <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-zinc-500">
                   <span>Verification: Verified Academic Record</span>
-                  <span className="text-emerald-400/80 font-semibold">0{idx + 2}</span>
+                  <span className="text-[#E97DA6]/85 font-semibold">0{idx + 2}</span>
                 </div>
               </div>
             </BlurText>

@@ -11,7 +11,7 @@ import Contact from './components/Contact';
 export default function App() {
   return (
     <SmoothScroll>
-      <div className="relative min-h-screen bg-[#060707] text-zinc-100 selection:bg-[#0d281e] selection:text-[#34d399] overflow-x-hidden font-sans">
+      <div className="relative min-h-screen bg-[#060707] text-zinc-100 selection:bg-[#2D0A1E] selection:text-[#E97DA6] overflow-x-hidden font-sans">
         <main>
           <Hero />
           <About />

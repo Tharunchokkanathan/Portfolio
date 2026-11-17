@@ -29,8 +29,8 @@ export default function About() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
         {/* Left Column: Bio & Philosophy */}
         <div className="lg:col-span-6">
-          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-400 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#E97DA6] mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E97DA6] shadow-[0_0_8px_rgba(233,125,166,0.6)]"></span>
             About Me
           </div>
 
@@ -49,7 +49,7 @@ export default function About() {
               blur={10}
               distance={25}
               delay={80}
-              className="text-base sm:text-lg font-semibold text-emerald-400 mb-2"
+              className="text-base sm:text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#E97DA6] to-[#FFC9B9] mb-2"
             />
             <BlurText delay={120} blur={8} distance={20}>
               <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs sm:text-sm text-zinc-400 font-mono">
@@ -92,18 +92,18 @@ export default function About() {
         <div className="lg:col-span-6 space-y-4">
           <BlurText delay={80} blur={8} distance={20}>
             <div className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-2 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-400" /> Community Involvements & Travel
+              <Sparkles className="w-4 h-4 text-[#E97DA6]" /> Community Involvements & Travel
             </div>
           </BlurText>
 
           {highlights.map((item, idx) => (
             <BlurText key={idx} delay={120 + idx * 70} blur={10} distance={30}>
-              <div className="p-6 sm:p-7 rounded-2xl bg-[#090b0a] border border-white/5 hover:border-emerald-500/25 transition-all duration-300 group">
+              <div className="p-6 sm:p-7 rounded-2xl bg-[#090b0a] border border-white/5 hover:border-[#B94273]/30 transition-all duration-300 group">
                 <div className="flex items-center justify-between gap-3 mb-2.5">
-                  <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#E97DA6] transition-colors">
                     {item.title}
                   </h3>
-                  <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-[#E97DA6]/10 text-[#E97DA6] border border-[#E97DA6]/25">
                     {item.badge}
                   </span>
                 </div>

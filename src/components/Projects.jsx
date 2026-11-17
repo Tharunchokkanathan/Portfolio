@@ -25,8 +25,8 @@ export default function Projects() {
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
         <div>
           <BlurText delay={0} blur={8} distance={20}>
-            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-400 mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#E97DA6] mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E97DA6] shadow-[0_0_8px_rgba(233,125,166,0.6)]"></span>
               Featured Portfolio
             </div>
           </BlurText>
@@ -69,7 +69,7 @@ export default function Projects() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: idx * 0.05 }}
-            className="group relative rounded-3xl p-7 sm:p-9 bg-[#0b0c0b] border border-white/10 hover:border-emerald-500/30 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl hover:shadow-black/70 overflow-hidden"
+            className="group relative rounded-3xl p-7 sm:p-9 bg-[#0b0c0b] border border-white/10 hover:border-[#B94273]/35 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl hover:shadow-black/70 overflow-hidden"
           >
             {/* Top metadata */}
             <div>
@@ -83,7 +83,7 @@ export default function Projects() {
               {/* Title & Tagline */}
               <h3 
                 onClick={() => setSelectedProject(project)}
-                className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors cursor-pointer"
+                className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:text-[#E97DA6] transition-colors cursor-pointer"
               >
                 {project.title}
               </h3>
@@ -117,7 +117,7 @@ export default function Projects() {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-emerald-500 hover:text-black text-zinc-300 font-medium transition-all active:scale-95"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-[#E97DA6] hover:text-black text-zinc-300 font-medium transition-all active:scale-95"
                       title="Open Live Preview"
                     >
                       <span>Live Demo</span>
@@ -141,7 +141,7 @@ export default function Projects() {
 
                 <button
                   onClick={() => setSelectedProject(project)}
-                  className="inline-flex items-center gap-1 font-medium text-emerald-400 hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-1 font-medium text-[#E97DA6] hover:underline cursor-pointer"
                 >
                   <span>Details</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -149,9 +149,9 @@ export default function Projects() {
               </div>
             </div>
 
-            {/* Subtle glow highlight on hover in premium dark green */}
+            {/* Subtle glow highlight on hover in luxury raspberry */}
             <div
-              className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-0 group-hover:opacity-15 transition-opacity pointer-events-none bg-emerald-500"
+              className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-0 group-hover:opacity-15 transition-opacity pointer-events-none bg-[#B94273]"
             />
           </motion.div>
         ))}
@@ -178,7 +178,7 @@ export default function Projects() {
               </button>
 
               {/* Modal Header */}
-              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-emerald-400 mb-2">
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-[#E97DA6] mb-2">
                 <span>{selectedProject.category}</span>
                 <span>•</span>
                 <span className="text-zinc-500">{selectedProject.year}</span>
@@ -250,7 +250,7 @@ export default function Projects() {
                     <ul className="space-y-2.5">
                       {selectedProject.highlights.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-4 h-4 text-[#E97DA6] shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
