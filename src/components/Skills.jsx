@@ -16,8 +16,8 @@ export default function Skills() {
     <section id="skills" className="relative py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-white/5 scroll-mt-6">
       <div className="text-center max-w-2xl mx-auto mb-16 flex flex-col items-center">
         <BlurText delay={0} blur={8} distance={20}>
-          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#E97DA6] mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E97DA6] shadow-[0_0_8px_rgba(233,125,166,0.6)]"></span>
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-emerald-400 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             Capabilities
           </div>
         </BlurText>
@@ -45,10 +45,10 @@ export default function Skills() {
           return (
             <BlurText key={cat.category} delay={140 + i * 80} blur={10} distance={30}>
               <div
-                className="p-7 sm:p-8 rounded-3xl bg-[#090b0a] border border-white/5 hover:border-[#B94273]/30 transition-all duration-300 flex flex-col justify-between h-full"
+                className="p-7 sm:p-8 rounded-3xl bg-[#090b0a] border border-white/5 hover:border-emerald-500/25 transition-all duration-300 flex flex-col justify-between h-full"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#2D0A1E]/70 border border-[#B94273]/35 flex items-center justify-center text-[#E97DA6] mb-6 shadow-[0_0_15px_rgba(185,66,115,0.15)]">
+                  <div className="w-10 h-10 rounded-xl bg-[#0d281e]/60 border border-[#10b981]/30 flex items-center justify-center text-emerald-400 mb-6">
                     <Icon className="w-5 h-5" />
                   </div>
                   <h3 className="text-lg font-bold text-white mb-2">
@@ -63,7 +63,7 @@ export default function Skills() {
                         key={skill}
                         className="text-xs sm:text-sm text-zinc-300 flex items-center gap-2.5"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#E97DA6]/50 shrink-0" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/40 shrink-0" />
                         <span>{skill}</span>
                       </li>
                     ))}

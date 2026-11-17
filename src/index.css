@@ -9,12 +9,12 @@
   }
 
   ::selection {
-    background-color: #2D0A1E;
-    color: #E97DA6;
+    background-color: #0d281e;
+    color: #34d399;
   }
 }
 
-/* Custom smooth scrollbar with dark wine / rose */
+/* Custom smooth scrollbar with dark green / grey */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -22,12 +22,12 @@
   background: #060707;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f141a;
+  background: #181f1b;
   border-radius: 9999px;
-  border: 1px solid rgba(233, 125, 166, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.15);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B94273;
+  background: #10b981;
 }
 
 /* Floating dock clean state & focus outline reset */

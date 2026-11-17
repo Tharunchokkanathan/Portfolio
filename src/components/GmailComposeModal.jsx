@@ -349,12 +349,12 @@ export default function GmailComposeModal({
               <motion.div
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-16 h-16 rounded-full bg-[#E97DA6]/15 text-[#E97DA6] flex items-center justify-center mb-4 border border-[#E97DA6]/30 shadow-[0_0_30px_rgba(233,125,166,0.25)]"
+                className="w-16 h-16 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.25)]"
               >
                 <CheckCircle2 className="w-9 h-9" />
               </motion.div>
               <h3 className="text-xl font-semibold text-white mb-1">Message Delivered!</h3>
-              <p className="text-sm font-medium text-[#E97DA6] mb-2">
+              <p className="text-sm font-medium text-emerald-400 mb-2">
                 Sent to Tharun’s Inbox &lt;{recipient}&gt;
               </p>
               
@@ -371,7 +371,7 @@ export default function GmailComposeModal({
               </div>
 
               <p className="text-xs text-zinc-400 max-w-sm mb-6 leading-relaxed">
-                Tharun has received your inquiry and will reply directly to <span className="font-mono text-[#E97DA6] font-medium">{senderEmail}</span>.
+                Tharun has received your inquiry and will reply directly to <span className="font-mono text-emerald-400 font-medium">{senderEmail}</span>.
               </p>
               <button
                 type="button"
@@ -438,7 +438,7 @@ export default function GmailComposeModal({
                     <span className="font-medium text-white">Tharun Chokkanathan</span>
                     <span className="text-zinc-400 font-normal font-mono text-[11px]">&lt;{recipient}&gt;</span>
                     {copied ? (
-                      <Check className="w-3 h-3 text-[#E97DA6] ml-0.5" />
+                      <Check className="w-3 h-3 text-emerald-400 ml-0.5" />
                     ) : (
                       <Copy className="w-3 h-3 text-zinc-400 group-hover:text-white ml-0.5 opacity-60" />
                     )}

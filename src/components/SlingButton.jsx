@@ -30,7 +30,7 @@ export default function SlingButton({
   onSend,
   padColor = '#141a16',
   iconColor = '#f4f4f5',
-  accentColor = '#E97DA6',
+  accentColor = '#10b981',
   wellColor = '#080b09',
   bandColor = 'rgba(16, 185, 129, 0.45)',
   size = 56,
@@ -465,7 +465,7 @@ export default function SlingButton({
               {children ?? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium">
                   <span>Live Demo</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#E97DA6]" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
                 </span>
               )}
             </span>

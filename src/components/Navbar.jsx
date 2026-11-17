@@ -92,7 +92,7 @@ export default function Navbar() {
   return (
     <nav
       aria-label="Bottom Floating Dock"
-      className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center p-1.5 sm:p-2 rounded-full bg-[#080909]/80 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(233,125,166,0.08)] ring-1 ring-white/5 transition-all duration-300 pointer-events-auto"
+      className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center p-1.5 sm:p-2 rounded-full bg-[#080909]/80 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(16,185,129,0.06)] ring-1 ring-white/5 transition-all duration-300 pointer-events-auto"
     >
       <div className="flex items-center gap-1 sm:gap-1.5">
         {navItems.map((item) => {

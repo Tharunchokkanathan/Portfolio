@@ -119,7 +119,7 @@ export const portfolioData = {
       tags: ["React", "Node.js", "Express", "PostgreSQL", "Tailwind CSS", "REST API"],
       liveUrl: "https://nourish-network-4bit.onrender.com/",
       githubUrl: "https://github.com/Tharunchokkanathan/Nourish__Network",
-      color: "#E97DA6",
+      color: "#10b981",
       stats: [
         { label: "Mission", value: "Food Rescue" },
         { label: "Stack", value: "Full-Stack" },
@@ -141,7 +141,7 @@ export const portfolioData = {
       tags: ["Firebase Hosting", "AI / ML Analytics", "Tailwind CSS", "Data Viz", "Renewable Energy"],
       liveUrl: "https://solaris-trails2.vercel.app/",
       githubUrl: "https://github.com/Tharunchokkanathan/SOLARIS",
-      color: "#E97DA6",
+      color: "#10b981",
       stats: [
         { label: "Analytics", value: "AI-Optimized" },
         { label: "Monitoring", value: "Real-Time Telemetry" },
@@ -163,7 +163,7 @@ export const portfolioData = {
       tags: ["React", "HTML5 Canvas", "Game Loops", "Input Mirroring", "Tailwind CSS"],
       liveUrl: "https://clone-me-sepia.vercel.app/",
       githubUrl: "https://github.com/Tharunchokkanathan/CLONE-ME",
-      color: "#E97DA6",
+      color: "#10b981",
       stats: [
         { label: "Frame Rate", value: "60+ FPS" },
         { label: "Mechanic", value: "Ghost Recording" },
@@ -185,7 +185,7 @@ export const portfolioData = {
       tags: ["React", "Firebase / DB", "GPS Geolocation", "Zero-Trust", "Emergency Ops"],
       liveUrl: "https://beacon-577ad.web.app/",
       githubUrl: "https://github.com/Tharunchokkanathan/BEACON",
-      color: "#E97DA6",
+      color: "#10b981",
       stats: [
         { label: "Architecture", value: "Zero-Trust" },
         { label: "Tracking", value: "GPS Geo-Grid" },
