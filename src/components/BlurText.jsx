@@ -1,7 +1,26 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
+
+// Singleton scroll tracker to eliminate dozens of redundant window listeners and state re-renders
+let globalScrollDir = 'down';
+let globalLastY = 0;
+let globalScrollInitialized = false;
+
+function ensureGlobalScrollTracker() {
+  if (typeof window === 'undefined' || globalScrollInitialized) return;
+  globalScrollInitialized = true;
+  window.addEventListener(
+    'scroll',
+    () => {
+      const y = window.scrollY;
+      globalScrollDir = y >= globalLastY ? 'down' : 'up';
+      globalLastY = y;
+    },
+    { passive: true }
+  );
+}
 
 const BlurText = ({
   text = '',
@@ -28,21 +47,12 @@ const BlurText = ({
     amount: threshold || 0.1
   });
 
-  const [scrollDir, setScrollDir] = useState('down');
-  const lastY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
-
   useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      setScrollDir(currentY >= lastY.current ? 'down' : 'up');
-      lastY.current = currentY;
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    ensureGlobalScrollTracker();
   }, []);
 
   // Downwards scroll uses specified direction; backwards (upwards) scroll reverses
-  const effectiveDirection = scrollDir === 'down' ? direction : (direction === 'top' ? 'bottom' : 'top');
+  const effectiveDirection = globalScrollDir === 'down' ? direction : (direction === 'top' ? 'bottom' : 'top');
   const sign = effectiveDirection === 'top' ? -1 : 1;
   const initialY = sign * distance;
 
@@ -124,7 +134,7 @@ const BlurText = ({
           <motion.span
             key={piece.key}
             className={isHighlighted && highlightClassName ? highlightClassName : undefined}
-            style={{ display: 'inline-block', willChange: 'transform, filter, opacity' }}
+            style={{ display: 'inline-block' }}
             initial={{
               opacity: 0,
               filter: `blur(${blur}px)`,

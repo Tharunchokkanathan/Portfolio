@@ -17,44 +17,52 @@ export default function Navbar() {
     // True sequential order of sections as they appear down the page
     const domSections = ['about', 'academics', 'skills', 'projects', 'contact'];
 
+    let ticking = false;
     const handleScroll = () => {
       // If user clicked a button, ignore scroll tracking while scrolling to target
       if (isManualScrolling.current) return;
 
-      // If at the top hero section
-      if (window.scrollY < 200) {
-        setActiveSection('');
-        return;
-      }
-
-      // Check if user has scrolled to the bottom of the page
-      const isAtBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 80;
-
-      if (isAtBottom) {
-        setActiveSection('contact');
-        return;
-      }
-
-      // Target line at 38% of the viewport height
-      const targetY = window.innerHeight * 0.38;
-      let matched = '';
-
-      for (const id of domSections) {
-        const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // The single section currently intersecting targetY
-          if (rect.top <= targetY && rect.bottom > targetY) {
-            matched = id;
-            break;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          // If at the top hero section
+          if (window.scrollY < 200) {
+            setActiveSection('');
+            ticking = false;
+            return;
           }
-        }
-      }
 
-      if (matched) {
-        setActiveSection(matched);
+          // Check if user has scrolled to the bottom of the page
+          const isAtBottom =
+            window.innerHeight + window.scrollY >=
+            document.documentElement.scrollHeight - 80;
+
+          if (isAtBottom) {
+            setActiveSection('contact');
+            ticking = false;
+            return;
+          }
+
+          // Target line at 38% of the viewport height
+          const targetY = window.innerHeight * 0.38;
+          let matched = '';
+
+          for (const id of domSections) {
+            const el = document.getElementById(id);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= targetY && rect.bottom > targetY) {
+                matched = id;
+                break;
+              }
+            }
+          }
+
+          if (matched) {
+            setActiveSection(matched);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -83,7 +91,11 @@ export default function Navbar() {
 
     // 3. Smooth scroll via Lenis for buttery-smooth 60+ FPS motion, or native smooth scroll
     if (window.lenis) {
-      window.lenis.scrollTo(el, { offset: -30, duration: 1.1 });
+      window.lenis.scrollTo(el, {
+        offset: -30,
+        duration: 0.95,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+      });
     } else {
       el.scrollIntoView({ behavior: 'smooth' });
     }
