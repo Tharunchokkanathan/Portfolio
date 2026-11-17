@@ -1,45 +1,26 @@
 import React from 'react';
-import Galaxy from './Galaxy';
 import SideRays from './background/SideRays';
 import ParticleText from './ParticleText';
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16">
-      {/* Background Layer: Deep Cosmic Galaxy + Ambient Falling Light Rays */}
+      {/* Background SideRays WebGL shader - Ambient light with warm golden/emerald rays */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Layer 1: Galaxy Starfield with deep twinkling stars, mouse repulsion & warp */}
-        <div className="absolute inset-0">
-          <Galaxy
-            density={1}
-            glowIntensity={0.35}
-            flareIntensity={1}
-            starSpeed={0.5}
-            mouseRepulsion={true}
-            repulsionStrength={2}
-            clickWarp={true}
-            twinkleIntensity={0.35}
-            transparent={true}
-            className="w-full h-full opacity-85"
-          />
-        </div>
-
-        {/* Layer 2: SideRays WebGL shader - Ambient light with warm golden/emerald rays */}
         <SideRays
           rayColor1="#FFC46B"
           rayColor2="#1a5b45"
           origin="top-left"
           speed={2.2}
-          intensity={2.0}
+          intensity={2.2}
           spread={2}
           density={5}
           followMouse={true}
           mouseInfluence={0.8}
-          className="w-full h-full opacity-80"
+          className="w-full h-full opacity-90"
         />
-
-        {/* Layer 3: Subtle radial vignette anchoring center without swallowing the light */}
-        <div className="absolute inset-0 bg-radial from-transparent via-[#060707]/20 to-[#060707] pointer-events-none" />
+        {/* Subtle radial vignette anchoring center without swallowing the light */}
+        <div className="absolute inset-0 bg-radial from-transparent via-[#060707]/25 to-[#060707] pointer-events-none" />
       </div>
 
       {/* Hero Interactive Particle Text */}
