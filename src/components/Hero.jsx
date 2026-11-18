@@ -4,7 +4,7 @@ import ParticleText from './ParticleText';
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16">
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-16">
       {/* Background SideRays WebGL shader - Ambient light with warm golden/emerald rays */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <SideRays
