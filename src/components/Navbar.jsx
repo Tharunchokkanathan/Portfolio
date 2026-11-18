@@ -129,9 +129,9 @@ export default function Navbar() {
         theme="dark"
         size="md"
         frame={true}
-        color="#800020"
-        activeTextColor="#ffffff"
-        colors={['#ffffff', '#800020', '#a81c42', '#ffffff', '#650019', '#fce7f3']}
+        color="#f4f4f5"
+        activeTextColor="#18161d"
+        colors={['#800020', '#a81c42', '#650019', '#900020', '#b31b45', '#ffffff']}
         particleCount={16}
         spread={44}
         animationTime={380}
@@ -139,7 +139,7 @@ export default function Navbar() {
         gooeyness={0.92}
         wobble={0.45}
         hoverEffect={true}
-        hoverColor="rgba(128, 0, 32, 0.22)"
+        hoverColor="rgba(255, 255, 255, 0.08)"
       />
     </div>
   );
