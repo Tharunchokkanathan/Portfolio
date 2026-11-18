@@ -7,10 +7,10 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 
 const THEMES = {
   dark: {
-    '--gn-frame': 'rgba(38, 35, 46, 0.66)',
-    '--gn-frame-edge': 'rgba(255, 255, 255, 0.08)',
-    '--gn-frame-highlight': 'rgba(255, 255, 255, 0.07)',
-    '--gn-frame-shadow': '0 22px 44px -20px rgba(0, 0, 0, 0.8), 0 6px 16px -8px rgba(0, 0, 0, 0.5)',
+    '--gn-frame': 'rgba(8, 8, 10, 0.92)',
+    '--gn-frame-edge': 'rgba(255, 255, 255, 0.1)',
+    '--gn-frame-highlight': 'rgba(255, 255, 255, 0.05)',
+    '--gn-frame-shadow': '0 24px 48px -18px rgba(0, 0, 0, 0.95), 0 8px 24px -8px rgba(0, 0, 0, 0.85)',
     '--gn-ink': '#f4f4f5',
     '--gn-muted': 'rgba(244, 244, 245, 0.62)'
   },
