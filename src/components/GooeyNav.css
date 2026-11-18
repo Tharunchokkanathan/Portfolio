@@ -1,9 +1,9 @@
 .gooey-nav {
   --gn-pad: 6px;
   --gn-gap: 4px;
-  --gn-font: 13.5px;
-  --gn-x: 14px;
-  --gn-y: 8px;
+  --gn-font: 14px;
+  --gn-x: 16px;
+  --gn-y: 9px;
   position: relative;
   display: inline-flex;
   max-width: 100%;
@@ -14,17 +14,17 @@
 .gooey-nav--sm {
   --gn-pad: 5px;
   --gn-gap: 2px;
-  --gn-font: 12.5px;
-  --gn-x: 11px;
-  --gn-y: 6.5px;
+  --gn-font: 13px;
+  --gn-x: 13px;
+  --gn-y: 7px;
 }
 
 .gooey-nav--lg {
   --gn-pad: 7px;
   --gn-gap: 6px;
-  --gn-font: 15px;
-  --gn-x: 18px;
-  --gn-y: 10px;
+  --gn-font: 16px;
+  --gn-x: 20px;
+  --gn-y: 11px;
 }
 
 /* Fluid responsive scaling for mobile screens */
@@ -43,8 +43,8 @@
   border-radius: 999px;
   background: var(--gn-frame);
   box-shadow: var(--gn-frame-shadow);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
 }
 
 .gooey-nav__stage {

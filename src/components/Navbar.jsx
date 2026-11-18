@@ -130,16 +130,12 @@ export default function Navbar() {
         size="md"
         frame={true}
         particleCount={15}
-        spread={42}
-        animationTime={380}
-        timeVariance={320}
-        gooeyness={0.85}
-        wobble={0.45}
+        spread={40}
+        animationTime={350}
+        timeVariance={1000}
+        gooeyness={1}
+        wobble={0.5}
         hoverEffect={true}
-        color="#ffffff"
-        activeTextColor="#18161d"
-        hoverColor="rgba(255, 255, 255, 0.12)"
-        colors={['#10b981', '#34d399', '#ffffff']}
       />
     </div>
   );

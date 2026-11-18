@@ -7,26 +7,26 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 
 const THEMES = {
   dark: {
-    '--gn-frame': 'rgba(8, 9, 9, 0.85)',
-    '--gn-frame-edge': 'rgba(255, 255, 255, 0.1)',
-    '--gn-frame-highlight': 'rgba(255, 255, 255, 0.08)',
-    '--gn-frame-shadow': '0 20px 44px -18px rgba(0, 0, 0, 0.85), 0 0 25px rgba(16, 185, 129, 0.07)',
+    '--gn-frame': 'rgba(38, 35, 46, 0.66)',
+    '--gn-frame-edge': 'rgba(255, 255, 255, 0.08)',
+    '--gn-frame-highlight': 'rgba(255, 255, 255, 0.07)',
+    '--gn-frame-shadow': '0 22px 44px -20px rgba(0, 0, 0, 0.8), 0 6px 16px -8px rgba(0, 0, 0, 0.5)',
     '--gn-ink': '#f4f4f5',
-    '--gn-muted': 'rgba(244, 244, 245, 0.65)'
+    '--gn-muted': 'rgba(244, 244, 245, 0.62)'
   },
   light: {
-    '--gn-frame': 'rgba(240, 240, 243, 0.85)',
-    '--gn-frame-edge': 'rgba(24, 24, 27, 0.08)',
+    '--gn-frame': 'rgba(240, 240, 243, 0.8)',
+    '--gn-frame-edge': 'rgba(24, 24, 27, 0.07)',
     '--gn-frame-highlight': 'rgba(255, 255, 255, 0.95)',
     '--gn-frame-shadow': '0 22px 44px -22px rgba(24, 24, 27, 0.3), 0 6px 16px -10px rgba(24, 24, 27, 0.16)',
     '--gn-ink': '#27272a',
-    '--gn-muted': 'rgba(39, 39, 42, 0.65)'
+    '--gn-muted': 'rgba(39, 39, 42, 0.62)'
   }
 };
 
 const PILLS = {
-  dark: { color: '#ffffff', hover: 'rgba(255, 255, 255, 0.12)', shadow: 0.4 },
-  light: { color: '#27272a', hover: 'rgba(24, 24, 27, 0.08)', shadow: 0.2 }
+  dark: { color: '#f4f4f5', hover: 'rgba(255, 255, 255, 0.08)', shadow: 0.4 },
+  light: { color: '#27272a', hover: 'rgba(24, 24, 27, 0.06)', shadow: 0.2 }
 };
 
 const SIZES = { sm: 'gooey-nav--sm', md: 'gooey-nav--md', lg: 'gooey-nav--lg' };
