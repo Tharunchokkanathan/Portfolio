@@ -305,7 +305,7 @@ const ParticleText = ({
       const square = shape === 'square';
       for (const particle of group) {
         const size = square ? base : Math.max(0.6, base * (0.75 + particle.weight * 0.45));
-        if (square) {
+        if (square || size <= 2.1) {
           target.rect(particle.x - size / 2, particle.y - size / 2, size, size);
         } else {
           target.moveTo(particle.x + size / 2, particle.y);
@@ -602,12 +602,12 @@ const ParticleText = ({
 
       const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
       const targets = [];
-      const sampleStep = Math.max(1, Math.floor(Number(s.density) || 2));
+      const sampleStep = Math.max(2, Math.floor(s.density));
 
       for (let y = 0; y < offscreen.height; y += sampleStep) {
         for (let x = 0; x < offscreen.width; x += sampleStep) {
           const alpha = imageData.data[(y * offscreen.width + x) * 4 + 3];
-          if (alpha > 25) {
+          if (alpha > 40) {
             targets.push({
               x: nextWidth / 2 - offscreen.width / 2 + x,
               y: nextHeight / 2 - offscreen.height / 2 + y,
@@ -617,9 +617,9 @@ const ParticleText = ({
         }
       }
 
-      const maxParticles = Math.max(3000, Math.min(18000, Math.floor((nextWidth * nextHeight) / 24)));
+      const maxParticles = Math.max(900, Math.min(5200, Math.floor((nextWidth * nextHeight) / 90)));
       const stride = Math.max(1, Math.ceil(targets.length / maxParticles));
-      const selected = stride === 1 ? targets : targets.filter((_, index) => index % stride === 0);
+      const selected = targets.filter((_, index) => index % stride === 0);
       const intro = introPending && !reducedMotion;
       introPending = false;
 
