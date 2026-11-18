@@ -28,8 +28,8 @@ export default function Hero() {
         <div style={{ width: '100%', height: 360 }} className="flex items-center justify-center cursor-pointer">
           <ParticleText
             text="Dream. Build. Elevate."
-            particleSize={2.2}
-            density={4}
+            particleSize={1.5}
+            density={2}
             color="#ffffff"
             highlightColor="#000000"
             highlightMode="motion"
