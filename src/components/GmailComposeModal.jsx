@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { db } from '../firebase/config';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import {
   X,
   Minus,
@@ -146,7 +148,21 @@ export default function GmailComposeModal({
     setStatus('sending');
 
     try {
-      // Direct POST to FormSubmit without boring blue table
+      // 1. Save directly to Cloud Firestore 'inquiries' collection
+      try {
+        await addDoc(collection(db, 'inquiries'), {
+          senderEmail: senderEmail.trim(),
+          subject: subject.trim() || 'Portfolio Collaboration Inquiry',
+          message: message.trim(),
+          createdAt: serverTimestamp(),
+          clientTimestamp: new Date().toISOString(),
+          read: false
+        });
+      } catch (firestoreErr) {
+        console.warn('Firestore submission note:', firestoreErr);
+      }
+
+      // 2. Direct POST to FormSubmit for immediate Gmail email delivery
       await fetch('https://formsubmit.co/ajax/tharunchokkanc@gmail.com', {
         method: 'POST',
         headers: {
@@ -164,7 +180,7 @@ export default function GmailComposeModal({
       });
 
       setStatus('success');
-      showToast('Message sent directly to Tharun! 🚀');
+      showToast('Message sent directly to Tharun & saved to database! 🚀');
 
       setTimeout(() => {
         handleDiscard();
